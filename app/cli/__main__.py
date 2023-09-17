@@ -10,7 +10,7 @@ def registration():
     login = input("Введите ваше имя: ")
     age = input("Введите ваш возраст: ")
     phone_number = input("Введите ваш номер телефона: ")
-    email = input("Введите вашу почту: ")
+    email = input("Введите ваш email: ")
     while True:
         password = getpass.getpass("Введите ваш пароль: ")
         password_repet = getpass.getpass("Подтвердите пароль: ")
