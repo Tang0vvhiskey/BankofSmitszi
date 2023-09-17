@@ -1,6 +1,9 @@
 import sys
 import getpass
 import hashlib
+import sqlite3
+import getpass
+
 
 from app.serveces.user import User
 from app.dao.user_dao import UserDao
@@ -25,8 +28,35 @@ def registration():
     user_dao = UserDao()
     user_dao.create(user)
 
+
+def authenticate(login, hashpass):
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+
+    # Выбираем запись пользователя с указанным логином из базы данных
+    cursor.execute('SELECT * FROM users WHERE login = ?', (login,))
+    user = cursor.fetchone()
+
+    # Проверяем, найден ли пользователь и совпадает ли введенный пароль с хешем в базе данных
+    if user and user[1] == hashpass:
+        print('Авторизация успешна. Добро пожаловать,', login)
+        return True
+    else:
+        print('Ошибка авторизации. Пожалуйста, проверьте логин и пароль.')
+        return False
+
+    conn.close()
+
+
 def login():
-    print("логинимся")
+    while True:
+        login = input("Введите ваш login: ")
+        input_hashpass = getpass.getpass("Введите пароль: ")
+        hashpass = hashlib.sha256(input_hashpass.encode("utf-8")).hexdigest()
+
+        if authenticate(login, hashpass):
+            break
+
 
 def whoami():
     print("ХТО Я?")
