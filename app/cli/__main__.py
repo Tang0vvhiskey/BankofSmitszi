@@ -33,11 +33,9 @@ def authenticate(login, hashpass):
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
 
-    # Выбираем запись пользователя с указанным логином из базы данных
     cursor.execute('SELECT * FROM users WHERE login = ?', (login,))
     user = cursor.fetchone()
 
-    # Проверяем, найден ли пользователь и совпадает ли введенный пароль с хешем в базе данных
     if user and user[1] == hashpass:
         print('Авторизация успешна. Добро пожаловать,', login)
         return True
