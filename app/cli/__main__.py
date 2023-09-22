@@ -4,6 +4,7 @@ import hashlib
 import sqlite3
 import getpass
 import json
+import os
 
 from app.serveces.user import User
 from app.dao.user_dao import UserDao
@@ -50,7 +51,9 @@ def login():
             "hashpass": hashpass
         }
         print(data)
-        with open("/home/tango/Рабочий стол/my_project/bank/app/.cache/data.json", "w", encoding="utf-8") as file:
+        if not os.path.exists(".cache"):
+            os.makedirs(".cache")
+        with open(".cache/data.json", "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=2)
         break
 
