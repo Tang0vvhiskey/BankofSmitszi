@@ -3,7 +3,7 @@ import getpass
 import hashlib
 import sqlite3
 import getpass
-
+import json
 
 from app.serveces.user import User
 from app.dao.user_dao import UserDao
@@ -29,32 +29,30 @@ def registration():
     user_dao.create(user)
 
 
-def authenticate(login, hashpass):
-    conn = sqlite3.connect('bank.db')
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT * FROM users WHERE login = ?', (login,))
-    user = cursor.fetchone()
-
-    if user and user[1] == hashpass:
-        print('Авторизация успешна. Добро пожаловать,', login)
-        return True
-    else:
-        print('Ошибка авторизации. Пожалуйста, проверьте логин и пароль.')
-        return False
-
-    conn.close()
-
-
 def login():
     while True:
         login = input("Введите ваш login: ")
         input_hashpass = getpass.getpass("Введите пароль: ")
         hashpass = hashlib.sha256(input_hashpass.encode("utf-8")).hexdigest()
 
-        if authenticate(login, hashpass):
-            break
+        user_dao = UserDao()
+        user = user_dao.find_by_login(login)
 
+        if not user:
+            print("Пользователь не найден!")
+            continue
+        if user.hashpass != hashpass:
+            print("Неверный пароль!")
+            continue
+        print('Авторизация успешна. Добро пожаловать,', login)
+        data = {
+            "login": login,
+            "hashpass": hashpass
+        }
+        print(data)
+        with open("/home/tango/Рабочий стол/my_project/bank/app/.cache/data.json", "w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False, indent=2)
+        break
 
 def whoami():
     print("ХТО Я?")
