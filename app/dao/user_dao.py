@@ -31,3 +31,14 @@ class UserDao:
             return None
 
         return User(data[0], data[1], data[2], data[3], data[4])
+
+
+    def all_information(self, login):
+        conn = sqlite3.connect('bank.db')
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT * FROM users WHERE login = ?', (login,))
+        data = cursor.fetchone()
+        conn.close()
+
+        return User(data[0], data[1], data[2], data[3], data[4])

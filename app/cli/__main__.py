@@ -48,9 +48,8 @@ def login():
         print('Авторизация успешна. Добро пожаловать,', login)
         data = {
             "login": login,
-            "hashpass": hashpass
+            "hashpass": hashpass,
         }
-        print(data)
         if not os.path.exists(".cache"):
             os.makedirs(".cache")
         with open(".cache/data.json", "w", encoding="utf-8") as file:
@@ -58,7 +57,21 @@ def login():
         break
 
 def whoami():
-    print("ХТО Я?")
+    with open('.cache/data.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    login = data['login']
+
+    user_dao = UserDao()
+    user = user_dao.all_information(login)
+
+    if user:
+        print(
+            f"Добро пожаловать {user.login}! Ваш возраст: {user.age} лет. Ваш номер телефона: {user.phone_number}. Ваша почта: {user.email}"
+            )
+    else:
+        print("Сначала авторизуйтесь!")
+
+
 
 
 def logout():
