@@ -1,8 +1,6 @@
 import sys
 import getpass
 import hashlib
-import sqlite3
-import getpass
 import json
 import os
 
@@ -56,34 +54,34 @@ def login():
             json.dump(data, file, ensure_ascii=False, indent=2)
         break
 
+
 def whoami():
+    if not os.path.exists(".cache/data.json"):
+        print("Вы не авторизованы")
+        return
     with open('.cache/data.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     login = data['login']
 
     user_dao = UserDao()
-    user = user_dao.all_information(login)
+    user = user_dao.find_by_login(login)
 
-    if user:
-        print(
-            f"Добро пожаловать {user.login}! Ваш возраст: {user.age} лет. Ваш номер телефона: {user.phone_number}. Ваша почта: {user.email}"
-            )
-    else:
-        print("Сначала авторизуйтесь!")
-#НЕ РАБОТАЕТ БЛОК ELSE
+    if not user:
+        print("Такого пользователя нет!")
+        return
+    print((
+        f"Добро пожаловать {user.login}!\n"
+        f"Ваш возраст: {user.age} лет\n"
+        f"Ваш номер телефона: {user.phone_number}\n"
+        f"Ваша почта: {user.email}"
+    ))
 
 
 def logout():
-
-    with open('.cache/data.json', 'r') as file:
-        data = json.load(file)
-    if data == {}:
-        print("вы не авторизованны!")
-    else:
-        data = {}
-        with open('.cache/data.json', 'w') as file:
-            json.dump(data, file)
-            print("Вы вышли из системы!")
+    filename = '.cache/data.json'
+    if os.path.exists(filename):
+        os.remove(filename)
+    print("Вы вышли из системы!")
 
 
 def main(args=None):
@@ -102,7 +100,6 @@ def main(args=None):
         print("БЛЯ РЕБЯТ ЧЕ ЕБАНУЛИСЬ СОВСЕМ?")
         return 1
     return 0
-
 
 
 if __name__ == '__main__':
