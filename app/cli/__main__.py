@@ -70,12 +70,20 @@ def whoami():
             )
     else:
         print("Сначала авторизуйтесь!")
-
-
+#НЕ РАБОТАЕТ БЛОК ELSE
 
 
 def logout():
-    print("Выход")
+
+    with open('.cache/data.json', 'r') as file:
+        data = json.load(file)
+    if data == {}:
+        print("вы не авторизованны!")
+    else:
+        data = {}
+        with open('.cache/data.json', 'w') as file:
+            json.dump(data, file)
+            print("Вы вышли из системы!")
 
 
 def main(args=None):
