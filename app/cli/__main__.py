@@ -106,7 +106,18 @@ def transfer():
     assert(user != None)
     print(user.login)
     login = input("Введите логин получателя: ")
+    if login == user.login:
+        print("Вы не можите перевести средства себе!")
+        return
     amount = int(input("Введите сумму: "))
+    if amount < 0:
+        print("Некорректная сумма!")
+        return
+    balance = BalanceDao().find_by_login(user.login)
+    print(f"{balance.balance}")
+    if balance.balance <= 0 or amount > balance.balance:
+        print("Недостаточно средств на балансе!")
+        return
     target_user = UserDao().find_by_login(login)
     if not target_user:
         print("Такого пользователя не существует")
